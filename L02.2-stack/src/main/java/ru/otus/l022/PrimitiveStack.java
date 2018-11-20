@@ -16,6 +16,7 @@ class PrimitiveStack implements IStack {
         arr[length] = x;
     }
 
+    @Override
     public int pop() {
         int length = arr.length;
         if (length == 0) {
