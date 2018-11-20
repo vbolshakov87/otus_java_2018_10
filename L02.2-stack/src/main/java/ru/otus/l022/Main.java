@@ -5,8 +5,7 @@ public class Main {
         try {
             int size = 100_000;
             benchmarkStack(size, new PrimitiveStack());
-            benchmarkStack(size, new WrapperStack());
-            benchmarkStack(size, new OptimizedStack(size));
+            benchmarkStack(size, new OptimizedStack());
         } catch (InterruptedException e) {
             System.out.printf("Interrupted exception happened, message: %s\n", e.getMessage());
         }
@@ -15,21 +14,22 @@ public class Main {
     private static void benchmarkStack(int size, IStack stack) throws InterruptedException {
         System.out.printf("Check %s", stack.getClass().getSimpleName());
 
-        long startTime = System.currentTimeMillis();
         long memStart = getMem();
+        long startTime = System.currentTimeMillis();
 
         // push
         for (int i = 0; i < size; i++) {
-            stack.push(size);
+            stack.push(i);
         }
         long memStackFull = getMem();
-        System.out.println("push finished");
+        long pushTime = System.currentTimeMillis();
+        System.out.printf("push finished\nExecution time: %d ms\n\n", pushTime - startTime);
 
         // pop
         for (int i = 0; i < size; i++) {
             stack.pop();
         }
-        System.out.println("pop finished");
+        System.out.printf("pop finished\nExecution time: %d ms\n\n", System.currentTimeMillis() - pushTime);
 
         stack = null;
         long elapsedTime = System.currentTimeMillis() - startTime;
