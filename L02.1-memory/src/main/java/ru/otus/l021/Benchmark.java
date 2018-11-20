@@ -1,6 +1,5 @@
 package ru.otus.l021;
 
-import java.util.List;
 import java.util.function.Supplier;
 
 class Benchmark {
@@ -13,59 +12,91 @@ class Benchmark {
     }
 
     void run(Supplier<Object> supplier) throws InterruptedException {
-        measure(supplier, 1);
-    }
-
-    void run(Supplier<Object> supplier, int listSize) throws InterruptedException {
-        measure(supplier, listSize);
-    }
-
-    private void measure(Supplier<Object> supplier, int listSize) throws InterruptedException {
-        arr = new Object[size];
-
-        long memStart = getMem();
-        arr = populateArray(supplier);
-        long arrSize = getMem() - memStart;
-
-        long elementSize = Math.round((double) (getMem() - memStart) / size);
-        System.out.printf("size: %d bytes\n", elementSize);
-
-        if (listSize > 1) {
-            String name = ((List) arr[0]).get(0).getClass().getSimpleName();
-            long size = Math.round((double) arrSize / (arr.length * listSize));
-            System.out.printf("%s size: %d bytes\n", name, size);
-        }
-
-        arr = null;
-        Thread.sleep(1000);
-
-        System.out.println("-----------------");
-        System.out.println();
-    }
-
-    private Object[] populateArray(Supplier<Object> supplier) {
         String type = supplier.get().getClass().getSimpleName();
         switch (type) {
             case "Integer":
-                for (int i = 0; i < size; i++) arr[i] = (int) supplier.get();
+                runInt();
                 break;
             case "Short":
-                for (int i = 0; i < size; i++) arr[i] = (short) supplier.get();
+                runShort();
                 break;
             case "Byte":
-                for (int i = 0; i < size; i++) arr[i] = (byte) supplier.get();
+                runByte();
                 break;
             case "Long":
-                for (int i = 0; i < size; i++) arr[i] = (long) supplier.get();
+                runLong();
                 break;
             case "Float":
-                for (int i = 0; i < size; i++) arr[i] = (float) supplier.get();
+                runFloat();
                 break;
 
-            default: for (int i = 0; i < size; i++) arr[i] = supplier.get();
+            default: runObject(supplier);
+        }
+    }
+
+
+    private void runObject(Supplier<Object> supplier) throws InterruptedException {
+        arr = new Object[size];
+        long memStart = getMem();
+        for (int i = 0; i < size; i++) {
+            arr[i] = supplier.get();
         }
 
-        return arr;
+        measureAndOut(memStart);
+    }
+
+    private void measureAndOut(long memStart) throws InterruptedException {
+        long elementSize = Math.round((double) (getMem() - memStart) / size);
+        System.out.printf("size: %d bytes\n", elementSize);
+
+        Thread.sleep(1000);
+
+        System.out.println("-----------------\n");
+    }
+
+    private void runInt() throws InterruptedException {
+        long memStart = getMem();
+        int[] pArr = new int[size];
+        for (int i = 0; i < size; i++) {
+            pArr[i] = Integer.MAX_VALUE;
+        }
+        measureAndOut(memStart);
+    }
+
+    private void runShort() throws InterruptedException {
+        long memStart = getMem();
+        short[] pArr = new short[size];
+        for (int i = 0; i < size; i++) {
+            pArr[i] = Short.MAX_VALUE;
+        }
+        measureAndOut(memStart);
+    }
+
+    private void runLong() throws InterruptedException {
+        long memStart = getMem();
+        long[] pArr = new long[size];
+        for (int i = 0; i < size; i++) {
+            pArr[i] = Long.MAX_VALUE;
+        }
+        measureAndOut(memStart);
+    }
+
+    private void runByte() throws InterruptedException {
+        long memStart = getMem();
+        byte[] pArr = new byte[size];
+        for (int i = 0; i < size; i++) {
+            pArr[i] = Byte.MAX_VALUE;
+        }
+        measureAndOut(memStart);
+    }
+
+    private void runFloat() throws InterruptedException {
+        long memStart = getMem();
+        float[] pArr = new float[size];
+        for (int i = 0; i < size; i++) {
+            pArr[i] = 1.0f;
+        }
+        measureAndOut(memStart);
     }
 
     private long getMem() throws InterruptedException {
