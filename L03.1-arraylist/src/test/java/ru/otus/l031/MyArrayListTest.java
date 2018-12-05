@@ -4,9 +4,11 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class MyArrayListTest {
-    private final int maxSize = 100_000;
+    private final int maxSize = 1_000;
     private Integer[] input;
     private MyArrayList<Integer> list;
 
@@ -48,6 +50,23 @@ public class MyArrayListTest {
             int diff = list.get(i) - listCloned.get(i);
             Assert.assertEquals(addToOriginal, diff);
         }
+    }
+
+    @Test
+    public void testaddAllIndex() {
+        list.addAll(Arrays.asList(input).subList(0, maxSize));
+        List listToAdd = new MyArrayList<Integer>();
+        listToAdd.add(-1);
+        listToAdd.add(-2);
+        listToAdd.add(-3);
+
+        list.addAll(5, listToAdd);
+        Assert.assertEquals(5, list.indexOf(-1));
+        Assert.assertEquals(6, list.indexOf(-2));
+        Assert.assertEquals(7, list.indexOf(-3));
+        Assert.assertEquals(-1, (int) list.get(5));
+        Assert.assertEquals(-2, (int) list.get(6));
+        Assert.assertEquals(-3, (int) list.get(7));
     }
 
     @Test
@@ -118,6 +137,60 @@ public class MyArrayListTest {
 
     @Test
     public void testAddAllCollection() {
+        List arrlist = new MyArrayList();
 
+        for (int i = 0; i < maxSize/3; i++) {
+            arrlist.add("A");
+            arrlist.add("B");
+            arrlist.add("C");
+            boolean b = Collections.addAll(arrlist, "1","2","3");
+            Assert.assertTrue(b);
+        }
+
+        int expectedSize = (maxSize - maxSize%3) * 2;
+        Assert.assertEquals(expectedSize, arrlist.size());
+        Assert.assertEquals("A", arrlist.get(0));
+        Assert.assertEquals("3", arrlist.get(arrlist.size()-1));
+    }
+
+    @Test
+    public void testCopyCollection() {
+        List<String> srclst = new MyArrayList<String>();
+        List<String> destlst = new MyArrayList<String>();
+
+        for (int i = 0; i < maxSize/3; i++) {
+            srclst.add("Java");
+            srclst.add("is");
+            srclst.add("best");
+
+            destlst.add("C++");
+            destlst.add("is");
+            destlst.add("not");
+        }
+
+        Collections.copy(destlst, srclst);
+        Assert.assertEquals(srclst.toString(), destlst.toString());
+    }
+
+    @Test
+    public void testCollectionSort() {
+        list.addAll(Arrays.asList(input).subList(0, maxSize));
+        for (Integer anInput : input) {
+            list.add(anInput * (-1));
+        }
+
+        // copy into dest list
+        Collections.sort(list);
+
+        Assert.assertEquals(input.length * 2, list.size());
+        for (int i = 0; i < list.size(); i++) {
+            Integer expected;
+            if (i < input.length) {
+                expected = input[input.length - 1 - i] * (-1);
+            } else {
+                expected = input[i - input.length];
+            }
+            Assert.assertEquals(expected, list.get(i));
+        }
     }
 }

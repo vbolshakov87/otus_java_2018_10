@@ -7,23 +7,26 @@ import java.util.stream.IntStream;
 public class MyArrayList<E> implements List<E> {
     private E[] arr;
     private int size;
-    private int maxSize = DEFAULT_MAX_SIZE;
+    private int capacity = DEFAULT_CAPACITY;
 
-    private static final int DEFAULT_MAX_SIZE = 10;
+    private static final int DEFAULT_CAPACITY = 10;
 
     public MyArrayList() {
         setEmptyArray();
     }
 
     private MyArrayList(E[] input, int size) {
+        if (size > input.length) {
+            throw new IndexOutOfBoundsException("size provided is bigger then array length");
+        }
         this.arr = Arrays.copyOf(input, size);
         this.size = size;
-        this.maxSize = size;
+        this.capacity = size;
     }
 
     private void setEmptyArray() {
-        maxSize = DEFAULT_MAX_SIZE;
-        this.arr = (E[])new Object[maxSize];
+        capacity = DEFAULT_CAPACITY;
+        this.arr = (E[])new Object[capacity];
         size = 0;
     }
 
@@ -109,9 +112,9 @@ public class MyArrayList<E> implements List<E> {
     }
 
     private void ensureCapacityInternal(int minCapacity) {
-        if (minCapacity >= maxSize) {
-            maxSize = minCapacity * 2;
-            arr = Arrays.copyOf(arr, maxSize);
+        if (minCapacity >= capacity) {
+            capacity = minCapacity < DEFAULT_CAPACITY * 100 ? minCapacity * 2 : (int) ((double)minCapacity * 1.2);
+            arr = Arrays.copyOf(arr, capacity);
         }
     }
 
@@ -251,7 +254,10 @@ public class MyArrayList<E> implements List<E> {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < size; i++) {
-            builder.append(arr[i]).append(" -> ");
+            if (i > 0) {
+                builder.append(" -> ");
+            }
+            builder.append(arr[i]);
         }
 
         return builder.toString();
