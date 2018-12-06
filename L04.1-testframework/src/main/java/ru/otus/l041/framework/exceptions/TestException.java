@@ -1,12 +1,12 @@
-package ru.otus.l041.framework.Exceptions;
+package ru.otus.l041.framework.exceptions;
 
-public class TestValidationException extends TestException {
+public class TestException extends InterruptedException {
     private static final long serialVersionUID = 6700697376100628474L;
 
     /**
      * Constructs an <code>InterruptedException</code> with no detail  message.
      */
-    public TestValidationException() {
+    public TestException() {
         super();
     }
 
@@ -16,7 +16,7 @@ public class TestValidationException extends TestException {
      *
      * @param   s   the detail message.
      */
-    public TestValidationException(String s) {
+    public TestException(String s) {
         super(s);
     }
 }

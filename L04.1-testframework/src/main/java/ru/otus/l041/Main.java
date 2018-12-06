@@ -1,6 +1,6 @@
 package ru.otus.l041;
 
-import ru.otus.l041.framework.Exceptions.TestException;
+import ru.otus.l041.framework.exceptions.TestException;
 import ru.otus.l041.framework.TestClassRunner;
 
 public class Main {

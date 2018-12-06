@@ -1,4 +1,4 @@
-package ru.otus.l041.framework.Exceptions;
+package ru.otus.l041.framework.exceptions;
 
 public class TestRunException extends TestException {
     private static final long serialVersionUID = 6700697376100628474L;

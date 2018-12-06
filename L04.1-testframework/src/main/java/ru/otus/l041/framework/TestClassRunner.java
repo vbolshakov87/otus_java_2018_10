@@ -1,7 +1,7 @@
 package ru.otus.l041.framework;
 
-import ru.otus.l041.framework.Exceptions.TestRunException;
-import ru.otus.l041.framework.Exceptions.TestValidationException;
+import ru.otus.l041.framework.exceptions.TestRunException;
+import ru.otus.l041.framework.exceptions.TestValidationException;
 import ru.otus.l041.framework.annotations.After;
 import ru.otus.l041.framework.annotations.Before;
 import ru.otus.l041.framework.annotations.Test;
