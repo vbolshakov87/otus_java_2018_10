@@ -16,6 +16,8 @@ public class TestClassRunner {
     private HashMap<Method, String> methodMessages;
     private Class clazz;
     private Object object;
+    private int passed;
+    private int failed;
 
     public TestClassRunner(Class clazz) throws TestValidationException {
         this.clazz = clazz;
@@ -38,23 +40,34 @@ public class TestClassRunner {
             }
 
             Output.title(String.format("Execute test: %s", testFunction.getName()));
-            for (Method function: functions.get(Before.class)) {
-                runTestMethod(function);
+
+            try {
+                for (Method function: functions.get(Before.class)) {
+                    runTestMethod(function);
+                }
+
+                Output.info(String.format("Run test %s", testFunction.getName()));
+                runTestMethod(testFunction);
+
+                for (Method function: functions.get(After.class)) {
+                    runTestMethod(function);
+                }
+
+                Output.positive("passed");
+                passed++;
+            } catch (InvocationTargetException e) {
+                Output.err(String.format("Failed test %s", testFunction.getName()));
+                e.printStackTrace();
+                failed++;
             }
 
-            Output.info(String.format("Run test %s", testFunction.getName()));
-            runTestMethod(testFunction);
-
-            for (Method function: functions.get(After.class)) {
-                runTestMethod(function);
-            }
-
-            Output.positive("passed");
-            Output.finish();
+            Output.finishTest();
         }
+
+        Output.stat(passed, failed);
     }
 
-    private void runTestMethod(Method function) {
+    private void runTestMethod(Method function) throws InvocationTargetException {
         if (methodMessages.containsKey(function)) {
             Output.info(methodMessages.get(function));
         }
@@ -102,16 +115,12 @@ public class TestClassRunner {
     }
 
     private String getMessage(Method method, Class annotationType) {
-        if (annotationType == Before.class) {
-            return method.getAnnotation(Before.class).message();
+        try {
+            Annotation annotation = method.getAnnotation(annotationType);
+            String message = (String) ReflectionHelper.callMethod(annotation, "message");
+            return message == null? "": message;
+        } catch (InvocationTargetException e) {
+            return "";
         }
-        if (annotationType == After.class) {
-            return method.getAnnotation(After.class).message();
-        }
-        if (annotationType == Test.class) {
-            return method.getAnnotation(Test.class).message();
-        }
-
-        return "";
     }
 }

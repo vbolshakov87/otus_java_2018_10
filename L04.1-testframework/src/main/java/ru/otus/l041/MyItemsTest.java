@@ -17,7 +17,7 @@ public class MyItemsTest {
     @Test
     public void testAdd() {
         myItemsInt.add(1).add(2).add(3);
-        Assert.assertTrue(myItemsInt.size() == 3);
+        Assert.assertTrue(myItemsInt.size() == 4);
     }
 
     @Test

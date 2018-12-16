@@ -33,7 +33,7 @@ public class ReflectionHelper {
         boolean isAccessible = true;
         try {
             field = object.getClass().getDeclaredField(name); //getField() for public fields
-            isAccessible = field.canAccess(object);
+            isAccessible = field.isAccessible();
             field.setAccessible(true);
             return field.get(object);
         } catch (NoSuchFieldException | IllegalAccessException e) {
@@ -51,7 +51,7 @@ public class ReflectionHelper {
         boolean isAccessible = true;
         try {
             field = object.getClass().getDeclaredField(name); //getField() for public fields
-            isAccessible = field.canAccess(object);
+            isAccessible = field.isAccessible();
             field.setAccessible(true);
             field.set(object, value);
         } catch (NoSuchFieldException | IllegalAccessException e) {
@@ -63,15 +63,20 @@ public class ReflectionHelper {
         }
     }
 
-    public static Object callMethod(Object object, String name, Object... args) {
+    public static Object callMethod(Object object, String name, Object... args) throws InvocationTargetException {
         Method method = null;
         boolean isAccessible = true;
         try {
             method = object.getClass().getDeclaredMethod(name, toClasses(args));
-            isAccessible = method.canAccess(object);
+            isAccessible = method.isAccessible();
             method.setAccessible(true);
             return method.invoke(object, args);
-        } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+        } catch (InvocationTargetException e) {
+            if (e.getCause().toString().equals(AssertionFailedError.class.getName())) {
+                throw e;
+            }
+        }
+        catch (IllegalAccessException | NoSuchMethodException e) {
             e.printStackTrace();
         } finally {
             if (method != null && !isAccessible) {
